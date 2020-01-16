@@ -1,0 +1,11 @@
+{
+  "data": {
+    "name": "Lorem Ipsum",
+    "email":"loremipsum@gmail.com",
+    "gender":"Female",
+    "phone": "081234567890",
+    "address": "Ubud, Lorem, Ipsum - Bali, ID",
+    "dob": "31-12-2000",
+    "about": "Hi, I am a mobile and web app engineer, nice to e-meet you :-) Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content."
+  }
+}
