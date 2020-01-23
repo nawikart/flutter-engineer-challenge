@@ -9,4 +9,12 @@ class CustomTextStyle {
       fontWeight: FontWeight.w200,
     );
   }
+
+  static TextStyle errorText(BuildContext context) {
+    return TextStyle(
+      fontSize: 13,
+      color: Colors.red,
+      fontWeight: FontWeight.w200,
+    );
+  }
 }

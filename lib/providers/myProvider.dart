@@ -1,16 +1,11 @@
 import 'package:flutter/foundation.dart';
+import '../model/tvMaze/show.dart';
 
 class MyProvider extends ChangeNotifier {
 
-  String mode = 'dark';
-  void setMode(String newVal) {
-    mode = newVal;
-    notifyListeners();
-  }
-
-  String theme = 'dark';
-  void setTheme(String newVal) {
-    theme = newVal;
+  Show selectedShow;
+  void setSelectedShow(Show newVal) {
+    selectedShow = newVal;
     notifyListeners();
   }
 }

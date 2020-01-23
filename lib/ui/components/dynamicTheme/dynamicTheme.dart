@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 typedef ThemedWidgetBuilder = Widget Function(
     BuildContext context, ThemeData data);
@@ -32,9 +31,6 @@ class DynamicThemeState extends State<DynamicTheme> {
     switch (color) {
       case 'dark':
         {
-          final prefs = await SharedPreferences.getInstance();
-          prefs.setString('themeColor', color);
-
           setState(() {
             _data = ThemeData(
                 fontFamily: 'GothamRounded',
@@ -49,9 +45,6 @@ class DynamicThemeState extends State<DynamicTheme> {
 
       case 'light':
         {
-          final prefs = await SharedPreferences.getInstance();
-          prefs.setString('themeColor', color);
-
           setState(() {
             _data = ThemeData(
                 fontFamily: 'GothamRounded',

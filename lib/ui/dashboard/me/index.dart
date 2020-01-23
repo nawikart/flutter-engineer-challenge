@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../components/loadingPage.dart';
 import '../../components/primaryButton.dart';
 import '../../../utils/styles.dart';
-import '../../../api/me.dart';
+import '../../../model/user.dart';
 
 class MePage extends StatefulWidget {
   @override
@@ -10,28 +12,23 @@ class MePage extends StatefulWidget {
 }
 
 class _MePageState extends State<MePage> {
-  bool loading = true;
-  Map data;
+  User data;
 
   @override
   void initState() {
     super.initState();
-    getMe();
+
+    SharedPreferences.getInstance().then((prefs) {
+      data = User.fromJson(json.decode(prefs.getString('me')));
+      setState(() {});
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return (loading)
-        ? Padding(
-            padding: const EdgeInsets.all(100),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CircularProgressIndicator(
-                strokeWidth: 1,
-              ),
-            ),
-          )
+    return (data == null)
+        ? LoadingPage()
         : Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -43,7 +40,7 @@ class _MePageState extends State<MePage> {
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: Text(
-                    data['name'] ?? '',
+                    data.displayName ?? '',
                     style: theme.textTheme.display1,
                   ),
                 ),
@@ -57,23 +54,16 @@ class _MePageState extends State<MePage> {
                         Text('Edit', style: CustomTextStyle.smallLink(context)),
                   ),
                 ),
-                Text(data['phone'] ?? '', style: theme.textTheme.title),
+                Text(data.phone ?? '', style: theme.textTheme.title),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(data['email'] ?? ''),
+                  child: Text(data.email ?? ''),
                 ),
-                Text((data['gender'] ?? '') + '/' + (data['dob'] ?? '')),
+                Text((data.gender ?? '') + '/' + (data.dob ?? '')),
                 Padding(
-                  padding: const EdgeInsets.only(top: 20, bottom: 10),
+                  padding: const EdgeInsets.all(25),
                   child: Text(
-                    'about:',
-                    style: TextStyle(decoration: TextDecoration.underline),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: Text(
-                    data['about'] ?? '',
+                    "\"Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content.\"",
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -82,22 +72,16 @@ class _MePageState extends State<MePage> {
                   child: PrimaryButton(
                       labelText: 'L o g o u t',
                       width: 200,
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/');
+                      onPressed: () async {
+                        SharedPreferences preferences =
+                            await SharedPreferences.getInstance();
+                        preferences.clear();
+
+                        Navigator.pushReplacementNamed(context, '/');
                       }),
                 ),
               ],
             ),
           );
-  }
-
-  void getMe() async {
-    final res = await MeApi().get(context);
-    new Timer(const Duration(milliseconds: 300), () {
-      setState(() {
-        data = res;
-        loading = false;
-      });
-    });
   }
 }

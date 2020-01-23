@@ -4,10 +4,11 @@ import '../components/mainDrawer.dart';
 import '../components/dynamicTheme/themeSwitcherDialog.dart';
 import '../../utils/onWillPop.dart';
 import '../components/clippers/wave.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../components/dynamicTheme/dynamicTheme.dart';
 
 import 'home/index.dart';
-import 'list/index.dart';
+import 'shows/index.dart';
+import 'friends/index.dart';
 import 'me/index.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -19,7 +20,6 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  String themeColor = 'dark';
   int _selectedPageIndex = 0;
   List<Map<String, Object>> _pages;
 
@@ -34,22 +34,12 @@ class _DashboardPageState extends State<DashboardPage> {
     _selectedPageIndex = int.parse(widget.index) ?? 0;
     _pages = [
       {'title': 'Home', 'page': HomePage()},
-      {'title': 'Friends', 'page': ListPage()},
+      {'title': 'Shows', 'page': ShowsPage()},
+      {'title': 'Friends', 'page': FriendsPage()},
       {'title': 'Me', 'page': MePage()}
     ];
 
     super.initState();
-
-    checkThemeColor().then((result) {
-      setState(() {
-        themeColor = result;
-      });
-    });
-  }
-
-  checkThemeColor() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('themeColor');
   }
 
   @override
@@ -72,15 +62,10 @@ class _DashboardPageState extends State<DashboardPage> {
           leading: Builder(
             builder: (BuildContext context) {
               return IconButton(
-                icon: (themeColor == 'dark')
-                    ? const Icon(
-                        Icons.menu,
-                        color: Colors.blue,
-                      )
-                    : const Icon(
-                        Icons.menu,
-                        color: Colors.white,
-                      ),
+                icon: Icon(
+                  Icons.menu,
+                  color: theme.backgroundColor,
+                ),
                 onPressed: () {
                   Scaffold.of(context).openDrawer();
                 },
@@ -90,24 +75,17 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
           title: Text(
             _pages[_selectedPageIndex]['title'] ?? '',
-            style: TextStyle(
-                color: (themeColor == 'dark') ? Colors.blue : Colors.white),
+            style: TextStyle(color: theme.backgroundColor),
           ),
           actions: <Widget>[
             InkWell(
               onTap: () async {
                 await ThemeSwitcherDialog().selectColor(context);
-                checkThemeColor().then((result) {
-                  setState(() {
-                    themeColor = result;
-                  });
-                });
               },
               child: Container(
                   margin: EdgeInsets.only(right: 10),
-                  child: Icon(Icons.invert_colors,
-                      color:
-                          (themeColor == 'dark') ? Colors.blue : Colors.white)),
+                  child:
+                      Icon(Icons.invert_colors, color: theme.backgroundColor)),
             )
           ],
         ),
@@ -149,8 +127,12 @@ class _DashboardPageState extends State<DashboardPage> {
               title: Text('Home', style: TextStyle(fontSize: 10)),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.list),
-              title: Text('List', style: TextStyle(fontSize: 10)),
+              icon: Icon(Icons.live_tv),
+              title: Text('Shows', style: TextStyle(fontSize: 10)),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.group),
+              title: Text('Friends', style: TextStyle(fontSize: 10)),
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.account_circle),

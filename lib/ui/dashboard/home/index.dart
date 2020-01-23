@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
             Padding(
               padding: const EdgeInsets.all(20),
               child: Text(
-                  'Please feel free to test me adding any feature here...',
+                  'Please feel free to test me adding any feature here',
                   style: theme.textTheme.subtitle,
                   textAlign: TextAlign.center),
             ),
@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage> {
                   labelText: 'S t a r t',
                   width: 200,
                   onPressed: () {
-                    Navigator.pushNamed(context, 'dashboard/1');
+                    Navigator.pushReplacementNamed(context, 'dashboard/1');
                   }),
             ),
           ],

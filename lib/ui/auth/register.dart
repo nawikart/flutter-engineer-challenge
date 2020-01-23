@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../api/users.dart';
 import '../components/leftChangeTheme.dart';
 import '../components/primaryButton.dart';
 import '../components/baseTextField.dart';
@@ -11,7 +13,10 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final formKey = GlobalKey<FormState>();
   bool loading = false;
+  List invalidMsg = [];
+  Map data = {};
 
   @override
   void initState() {
@@ -23,7 +28,7 @@ class _RegisterPageState extends State<RegisterPage> {
     final theme = Theme.of(context);
     return WillPopScope(
       onWillPop: () async {
-        Navigator.pushNamed(context, '/');
+        Navigator.pushReplacementNamed(context, '/');
         return;
       },
       child: Scaffold(
@@ -74,78 +79,148 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   Container(
                     padding: const EdgeInsets.all(40),
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                            margin: EdgeInsets.symmetric(vertical: 5),
-                            child: BaseTextField(
-                                rounded: true,
-                                textAlign: TextAlign.center,
-                                labelText: 'Fullname')),
-                        Container(
-                            margin: EdgeInsets.symmetric(vertical: 5),
-                            child: BaseTextField(
-                                rounded: true,
-                                textAlign: TextAlign.center,
-                                labelText: 'Email')),
-                        Container(
-                            margin: EdgeInsets.symmetric(vertical: 5),
-                            child: BaseTextField(
-                                rounded: true,
-                                textAlign: TextAlign.center,
-                                labelText: 'Gender')),
-                        Container(
-                            margin: EdgeInsets.symmetric(vertical: 5),
-                            child: BaseTextField(
-                                rounded: true,
-                                textAlign: TextAlign.center,
-                                labelText: 'Phone')),
-                        Container(
-                            margin: EdgeInsets.symmetric(vertical: 5),
-                            child: BaseTextField(
-                                rounded: true,
-                                textAlign: TextAlign.center,
-                                labelText: 'Address')),
-                        Container(
-                            margin: EdgeInsets.symmetric(vertical: 5),
-                            child: BaseTextField(
-                                rounded: true,
-                                textAlign: TextAlign.center,
-                                labelText: 'D.O.B')),
-                        Container(
-                            margin: EdgeInsets.symmetric(vertical: 5),
-                            child: BaseTextField(
-                                rounded: true,
-                                maxLines: 5,
-                                textAlign: TextAlign.center,
-                                labelText: 'About')),
-                        Container(
-                          margin: const EdgeInsets.only(top: 20),
-                          child: PrimaryButton(
-                              labelText: 'R e g i s t e r',
-                              width: 200,
-                              loading: loading,
-                              onPressed: () {
-                                setState(() {
-                                  loading = true;
-                                });
-                                new Timer(const Duration(milliseconds: 1000),
-                                    () {
-                                  Navigator.pushNamed(context, 'dashboard/0');
-                                });
-                              }),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            Navigator.pushNamed(context, '/');
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text('L o g i n',
-                                style: CustomTextStyle.smallLink(context)),
+                    child: Form(
+                      key: formKey,
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                              margin: EdgeInsets.symmetric(vertical: 5),
+                              child: BaseTextField(
+                                  rounded: true,
+                                  textAlign: TextAlign.center,
+                                  labelText: 'Firstname',
+                                  onSaved: (String v) {
+                                    data['first_name'] = v;
+                                  })),
+                          Container(
+                              margin: EdgeInsets.symmetric(vertical: 5),
+                              child: BaseTextField(
+                                  rounded: true,
+                                  textAlign: TextAlign.center,
+                                  labelText: 'Lastname',
+                                  onSaved: (String v) {
+                                    data['last_name'] = v;
+                                  })),
+                          Container(
+                              margin: EdgeInsets.symmetric(vertical: 5),
+                              child: BaseTextField(
+                                  hintText: 'male / female',
+                                  rounded: true,
+                                  textAlign: TextAlign.center,
+                                  labelText: 'Gender',
+                                  onSaved: (String v) {
+                                    data['gender'] = v.toLowerCase();
+                                  })),
+                          Container(
+                              margin: EdgeInsets.symmetric(vertical: 5),
+                              child: BaseTextField(
+                                  rounded: true,
+                                  hintText: 'eg. 2000-31-12',
+                                  textAlign: TextAlign.center,
+                                  labelText: 'D.O.B',
+                                  onSaved: (String v) {
+                                    data['dob'] = v;
+                                  })),
+                          Container(
+                              margin: EdgeInsets.symmetric(vertical: 5),
+                              child: BaseTextField(
+                                  rounded: true,
+                                  textAlign: TextAlign.center,
+                                  labelText: 'Email',
+                                  onSaved: (String v) {
+                                    data['email'] = v;
+                                  })),
+                          Container(
+                              margin: EdgeInsets.symmetric(vertical: 5),
+                              child: BaseTextField(
+                                  rounded: true,
+                                  textAlign: TextAlign.center,
+                                  labelText: 'Phone',
+                                  onSaved: (String v) {
+                                    data['phone'] = v;
+                                  })),
+                          Container(
+                              margin: EdgeInsets.symmetric(vertical: 5),
+                              child: BaseTextField(
+                                  rounded: true,
+                                  textAlign: TextAlign.center,
+                                  labelText: 'Website',
+                                  onSaved: (String v) {
+                                    data['website'] = v;
+                                  })),
+                          Container(
+                              margin: EdgeInsets.symmetric(vertical: 5),
+                              child: BaseTextField(
+                                  rounded: true,
+                                  maxLines: 3,
+                                  textAlign: TextAlign.center,
+                                  labelText: 'Address',
+                                  onSaved: (String v) {
+                                    data['address'] = v;
+                                  })),
+                          Container(
+                            padding: const EdgeInsets.only(top: 20),
+                            child: Column(
+                              children: <Widget>[
+                                for (int i = 0; i < invalidMsg.length; i++)
+                                  Text(invalidMsg[i]['message'] ?? '',
+                                      textAlign: TextAlign.center,
+                                      style:
+                                          CustomTextStyle.errorText(context)),
+                              ],
+                            ),
                           ),
-                        )
-                      ],
+//
+                          Container(
+                            margin: const EdgeInsets.only(top: 10),
+                            child: PrimaryButton(
+                                labelText: 'R e g i s t e r',
+                                width: 200,
+                                loading: loading,
+                                onPressed: () async {
+                                  if (!loading) {
+                                    setState(() {
+//                                      loading = true;
+                                      invalidMsg = [];
+                                    });
+
+                                    formKey.currentState.save();
+                                    final res = await Users().create(data);
+                                    if (res['_meta']['success']) {
+                                      // save to local storage
+                                      final stringMe =
+                                          json.encode(res['result']);
+                                      final prefs =
+                                          await SharedPreferences.getInstance();
+                                      prefs.setString('me', stringMe);
+                                      Navigator.pushReplacementNamed(
+                                          context, 'dashboard/0');
+                                    } else {
+                                      if (res['result'][0] == null) {
+                                        invalidMsg.add(res['result']);
+                                      } else {
+                                        invalidMsg = res['result'];
+                                      }
+                                    }
+
+                                    setState(() {
+                                      loading = false;
+                                    });
+                                  }
+                                }),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              Navigator.pushReplacementNamed(context, '/');
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text('L o g i n',
+                                  style: CustomTextStyle.smallLink(context)),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   )
                 ],

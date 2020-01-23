@@ -4,7 +4,8 @@ import 'ui/auth/login.dart';
 import 'ui/auth/register.dart';
 import 'ui/dashboard/index.dart';
 import 'ui/dashboard/me/editScreen.dart';
-import 'ui/dashboard/list/room.dart';
+import 'ui/dashboard/friends/room.dart';
+import 'ui/dashboard/shows/show.dart';
 
 class FluroRouter {
   static Router router = Router();
@@ -29,6 +30,10 @@ class FluroRouter {
       handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
           RoomPage());
 
+  static Handler _showHandler = Handler(
+      handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
+          ShowPage(params['id'][0]));
+
 
   //////////////////
   static void setupRouter() {
@@ -46,5 +51,8 @@ class FluroRouter {
 
     router.define('/friends/room',
         handler: _roomHandler, transitionType: TransitionType.fadeIn);
+
+    router.define('/shows/:id',
+        handler: _showHandler, transitionType: TransitionType.fadeIn);
   }
 }

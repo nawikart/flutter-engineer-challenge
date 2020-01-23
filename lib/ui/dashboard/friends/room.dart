@@ -21,9 +21,8 @@ class _RoomPageState extends State<RoomPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return WillPopScope(
-      onWillPop: () async {
-        Navigator.pushNamed(context, 'dashboard/1');
-        return;
+      onWillPop: () {
+        Navigator.of(context).pop();
       },
       child: Scaffold(
           drawer: MainDrawer(),
@@ -61,8 +60,7 @@ class _RoomPageState extends State<RoomPage> {
                                 ),
                                 InkWell(
                                   onTap: () {
-                                    Navigator.pushNamed(
-                                        context, 'dashboard/1');
+                                    Navigator.of(context).pop();
                                   },
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),

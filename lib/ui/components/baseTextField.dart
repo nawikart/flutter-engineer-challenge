@@ -2,21 +2,30 @@ import 'package:flutter/material.dart';
 
 class BaseTextField extends StatelessWidget {
   final String labelText;
+  final String hintText;
   final TextAlign textAlign;
   final int maxLines;
   final String initialValue;
+  final TextEditingController controller;
   final TextInputType keyboardType;
   final bool obscureText;
   final bool rounded;
+  final Function onSaved;
+  final Function onChanged;
 
-  BaseTextField(
-      {this.labelText,
-      this.textAlign,
-      this.maxLines,
-      this.initialValue,
-      this.keyboardType,
-      this.obscureText,
-      this.rounded});
+  BaseTextField({
+    this.labelText,
+    this.hintText,
+    this.textAlign,
+    this.maxLines,
+    this.initialValue,
+    this.controller,
+    this.keyboardType,
+    this.obscureText,
+    this.rounded,
+    this.onSaved,
+    this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -38,19 +47,20 @@ class BaseTextField extends StatelessWidget {
           child: Text(labelText),
         ),
         TextFormField(
-          maxLines: maxLines ?? 1,
-          initialValue: initialValue ?? '',
-          style: (rounded ?? false) ? TextStyle(color: Colors.black) : null,
-          textAlign: textAlign ?? TextAlign.left,
-          keyboardType: keyboardType,
-          obscureText: obscureText ?? false,
-          decoration: new InputDecoration(
-              contentPadding: EdgeInsets.all(10),
-              fillColor: Colors.white,
-              filled: (rounded ?? false) ? true : false,
-              enabledBorder: border,
-              focusedBorder: border),
-        ),
+            maxLines: maxLines ?? 1,
+            initialValue: initialValue,
+            controller: controller,
+            textAlign: textAlign ?? TextAlign.left,
+            keyboardType: keyboardType,
+            obscureText: obscureText ?? false,
+            decoration: new InputDecoration(
+                hintText: hintText,
+                contentPadding: EdgeInsets.all(10),
+                filled: (rounded ?? false) ? true : false,
+                enabledBorder: border,
+                focusedBorder: border),
+            onSaved: onSaved,
+            onChanged: onChanged),
       ],
     );
   }

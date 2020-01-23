@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../components/dynamicTheme/themeSwitcherDialog.dart';
 
 class MainDrawer extends StatelessWidget {
@@ -15,7 +16,7 @@ class MainDrawer extends StatelessWidget {
                 children: <Widget>[
                   InkWell(
                     onTap: () {
-                      Navigator.pushNamed(context, 'dashboard/0');
+                      Navigator.pushReplacementNamed(context, 'dashboard/0');
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -27,19 +28,31 @@ class MainDrawer extends StatelessWidget {
                   ),
                   InkWell(
                     onTap: () {
-                      Navigator.pushNamed(context, 'dashboard/1');
+                      Navigator.pushReplacementNamed(context, 'dashboard/1');
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        'List',
+                        'Shows',
                         style: theme.textTheme.headline,
                       ),
                     ),
                   ),
                   InkWell(
                     onTap: () {
-                      Navigator.pushNamed(context, 'dashboard/2');
+                      Navigator.pushReplacementNamed(context, 'dashboard/2');
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Friends',
+                        style: theme.textTheme.headline,
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.pushReplacementNamed(context, 'dashboard/3');
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -50,8 +63,12 @@ class MainDrawer extends StatelessWidget {
                     ),
                   ),
                   InkWell(
-                    onTap: () {
-                      Navigator.pushNamed(context, '/');
+                    onTap: () async {
+                      SharedPreferences preferences =
+                          await SharedPreferences.getInstance();
+                      preferences.clear();
+
+                      Navigator.pushReplacementNamed(context, '/');
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
